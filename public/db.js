@@ -36,10 +36,10 @@ function checkDatabase() {
   console.log('check db invoked');
 
   // Open a transaction on your BudgetStore db
-  let transaction = db.transaction(['BudgetStore'], 'readwrite');
+  let transaction = db.transaction(["pending"], 'readwrite');
 
   // access your BudgetStore object
-  const store = transaction.objectStore('BudgetStore');
+  const store = transaction.objectStore("pending");
 
   // Get all records from store and set to a variable
   const getAll = store.getAll();
@@ -57,35 +57,14 @@ function checkDatabase() {
         },
       })
         .then((response) => response.json())
-        .then((res) => {
-          // If our returned response is not empty
-          if (res.length !== 0) {
-            // Open another transaction to BudgetStore with the ability to read and write
-            transaction = db.transaction(['BudgetStore'], 'readwrite');
-
-            // Assign the current store to a variable
-            const currentStore = transaction.objectStore('BudgetStore');
-
-            // Clear existing entries because our bulk add was successful
-            currentStore.clear();
-            console.log('Clearing store 🧹');
-          }
+        .then(() => {
+          const transaction = db.transaction(["pending"], readwrite);
+          const store = transaction.objectStore("pending");
+          store.clear();
         });
     }
   };
 }
-
-request.onsuccess = function (e) {
-  console.log('success');
-  db = e.target.result;
-
-  // Check if app is online before reading from db
-  if (navigator.onLine) {
-    console.log('Backend online! 🗄️');
-    checkDatabase();
-  }
-};
-
 
 // Listen for app coming back online
 window.addEventListener('online', checkDatabase);
