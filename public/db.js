@@ -1,6 +1,5 @@
 let db;
 
-// Create a new db request for a "budget" database.
 const request = indexedDB.open('budget',1);
 
 request.onupgradeneeded = function (e) {
@@ -21,13 +20,10 @@ request.onerror = function(e){
 
 const saveRecord = (record) => {
   console.log('Save record invoked');
-  // Create a transaction on the BudgetStore db with readwrite access
   const transaction = db.transaction(["pending"], 'readwrite');
 
-  // Access your BudgetStore object store
   const store = transaction.objectStore("pending");
 
-  // Add record to your store with add method.
   store.add(record);
 };
 
@@ -35,18 +31,13 @@ const saveRecord = (record) => {
 function checkDatabase() {
   console.log('check db invoked');
 
-  // Open a transaction on your BudgetStore db
   const transaction = db.transaction(["pending"], 'readwrite');
 
-  // access your BudgetStore object
   const store = transaction.objectStore("pending");
 
-  // Get all records from store and set to a variable
   const getAll = store.getAll();
 
-  // If the request was successful
   getAll.onsuccess = function () {
-    // If there are items in the store, we need to bulk add them when we are back online
     if (getAll.result.length > 0) {
       fetch('/api/transaction/bulk', {
         method: 'POST',
@@ -65,5 +56,4 @@ function checkDatabase() {
     }
   };
 }
-// Listen for app coming back online
 window.addEventListener('online', checkDatabase);
