@@ -32,7 +32,9 @@ self.addEventListener('activate', (event) => {
        );
     })
   );
-
+ self.clients.claim();
+});
+ 
 self.addEventListener('fetch', (event) => {
   if (event.request.url.startsWith(self.location.origin)) {
     event.respondWith(
