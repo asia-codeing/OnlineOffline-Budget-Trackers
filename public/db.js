@@ -36,7 +36,7 @@ function checkDatabase() {
   console.log('check db invoked');
 
   // Open a transaction on your BudgetStore db
-  let transaction = db.transaction(["pending"], 'readwrite');
+  const transaction = db.transaction(["pending"], 'readwrite');
 
   // access your BudgetStore object
   const store = transaction.objectStore("pending");
