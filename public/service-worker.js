@@ -1,22 +1,23 @@
 const FILES_TO_CACHE = [
-  "/",
-  "/index.html",
-  "/style.css",
-  "/icons/icon-192x192.png",
+  "/", 
+  "/index.html", 
+  "/index.js",  
+  "/styles.css", 
+  "/icons/icon-192x192.png", 
   "/icons/icon-512x512.png"
 ];
 const CACHE_NAME = "static-cache-v2";
 const DATA_CACHE_NAME = "data-cache-v1";
 
 //Install
-// code to install and register your service worker
-self.addEventListener("install", function (event) {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then(function (cache) {
+self.addEventListener("install", function (evt) {
+  evt.waitUntil(
+    caches.open(CACHE_NAME).then(cache => {
       console.log("Your files were pre-cached successfully!");
       return cache.addAll(FILES_TO_CACHE);
     })
   );
+
   self.skipWaiting();
 });
 // The activate handler takes care of cleaning up old caches.
@@ -27,7 +28,7 @@ self.addEventListener('activate', (event) => {
          keyList.map(key => {
            if(key !== CACHE_NAME && key !== DATA_CACHE_NAME){
              console.log("Remove old Cache data", key);
-             return cache.delete(key);
+             return caches.delete(key);
            }
          })
        );

@@ -1,37 +1,16 @@
 let db;
 
-const request = indexedDB.open('budget',1);
+const request = indexedDB.open("budget",1);
 
 request.onupgradeneeded = function (e) {
-  const db = e.target.result;
+    const db = e.target.result;
     db.createObjectStore("pending", { autoIncrement: true });
 };
-
-request.onsuccess = function (e) {
-  db = e.target.result;
-
-  if (navigator.onLine){
-    checkDatabase();
-  }
-};
-request.onerror = function(e){
-  console.log("Woops!" + e.target.errorCode);
-};
-
-const saveRecord = (record) => {
-  console.log('Save record invoked');
-  const transaction = db.transaction(["pending"], 'readwrite');
-
-  const store = transaction.objectStore("pending");
-
-  store.add(record);
-};
-
 
 function checkDatabase() {
   console.log('check db invoked');
 
-  const transaction = db.transaction(["pending"], 'readwrite');
+  const transaction = db.transaction(["pending"], "readwrite");
 
   const store = transaction.objectStore("pending");
 
@@ -49,11 +28,33 @@ function checkDatabase() {
       })
         .then((response) => response.json())
         .then(() => {
-          const transaction = db.transaction(["pending"], readwrite);
-          const store = transaction.objectStore("pending");
-          store.clear();
+          const transaction = db.transaction(["pending"], "readwrite");
+          const currentStore = transaction.objectStore("pending");
+          currentStore.clear();
         });
     }
   };
 }
-window.addEventListener('online', checkDatabase);
+
+request.onsuccess = function (e) {
+  db = e.target.result;
+
+  if (navigator.onLine){
+    checkDatabase();
+    console.log('Backend online! 🗄️');
+  }
+};
+request.onerror = function(e){
+  console.log("Woops!" + e.target.errorCode);
+};
+
+const saveRecord = (record) => {
+  console.log('Save record invoked');
+  const transaction = db.transaction(["pending"], "readwrite");
+
+  const store = transaction.objectStore("pending");
+
+  store.add(record);
+};
+
+window.addEventListener("online", checkDatabase);
