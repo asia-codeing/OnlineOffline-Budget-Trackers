@@ -40,8 +40,8 @@ request.onsuccess = function (e) {
   db = e.target.result;
 
   if (navigator.onLine){
-    checkDatabase();
     console.log('Backend online! 🗄️');
+    checkDatabase();
   }
 };
 request.onerror = function(e){
