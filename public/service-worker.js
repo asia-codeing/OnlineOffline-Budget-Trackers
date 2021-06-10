@@ -56,5 +56,15 @@ self.addEventListener(fetch, (event) => {
   return;
   }
 
-  event.respondWith
-})
+  event.respondWith(
+    fetch(event.request).catch(() => {
+      return caches.match(event.request).then((response) => {
+        if(response) {
+          return response;
+        }else if (event.request.headers.get("accept").includes("text/html")) {
+          return caches.match("/");
+        }
+      });
+    })
+  );
+});
