@@ -1,13 +1,13 @@
 let db;
 
-const request = indexedDB.open("budget",1);
+const request = indexedDB.open("budget",2);
 
 request.onupgradeneeded = function (e) {
     const db = e.target.result;
     db.createObjectStore("pending", { autoIncrement: true });
 };
 
-function checkDatabase() {
+const checkDatabase = () => {
   console.log('check db invoked');
 
   const transaction = db.transaction(["pending"], "readwrite");
