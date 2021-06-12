@@ -1,10 +1,37 @@
 let db;
+const indexedDB =
+  window.indexedDB ||
+  window.mozIndexedDB ||
+  window.webkitIndexedDB ||
+  window.msIndexedDB ||
+  window.shimIndexedDB;
 
-const request = indexedDB.open("budget",2);
+const request = indexedDB.open("budget",1);
 
 request.onupgradeneeded = function (e) {
     const db = e.target.result;
     db.createObjectStore("pending", { autoIncrement: true });
+};
+
+request.onsuccess = function (e) {
+  db = e.target.result;
+
+  if (navigator.onLine){
+    console.log('Backend online! 🗄️');
+    checkDatabase();
+  }
+};
+request.onerror = function(e){
+  console.log("Woops!" + e.target.errorCode);
+};
+
+const saveRecord = (record) => {
+  console.log('Save record invoked');
+  const transaction = db.transaction(["pending"], "readwrite");
+
+  const store = transaction.objectStore("pending");
+
+  store.add(record);
 };
 
 const checkDatabase = () => {
@@ -35,26 +62,5 @@ const checkDatabase = () => {
     }
   };
 }
-
-request.onsuccess = function (e) {
-  db = e.target.result;
-
-  if (navigator.onLine){
-    console.log('Backend online! 🗄️');
-    checkDatabase();
-  }
-};
-request.onerror = function(e){
-  console.log("Woops!" + e.target.errorCode);
-};
-
-const saveRecord = (record) => {
-  console.log('Save record invoked');
-  const transaction = db.transaction(["pending"], "readwrite");
-
-  const store = transaction.objectStore("pending");
-
-  store.add(record);
-};
 
 window.addEventListener("online", checkDatabase);
